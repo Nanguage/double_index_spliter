@@ -15,8 +15,10 @@ In this reads the index sequence is "NCAGGCGA+NTCCTTAC", the index-a is 'NCAGGCG
 
 ## Dependancy
 
+Python >= 2.7
+
 ``` bash
-$ pip install cutadapt biopython
+$ pip install click cutadapt biopython
 ```
 
 ## Usage:
@@ -30,7 +32,7 @@ Options:
                           mismatch on b
   -O, --outdir TEXT       path to output splited fastq files.
   -z, --gzip / --no-gzip  compress output fastq files with gzip.
-  --phred INTEGER         encode of fasta quality string.
+  --phred INTEGER         encode of fastq quality string.
   --help                  Show this message and exit.
 
 ```

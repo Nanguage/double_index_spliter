@@ -4,7 +4,9 @@ import logging
 import os
 from os.path import join, exists
 import gzip
+import sys
 from sys import stderr
+from io import TextIOWrapper
 
 import click
 from cutadapt.align import Aligner
@@ -98,7 +100,10 @@ def open_(fname, mode):
     """ open file according to it's suffix """
     assert 'b' not in mode
     if fname.endswith(".gz"):
-        return gzip.open(fname, mode+'b')
+        if sys.version_info > (3, 0, 0):
+            return TextIOWrapper(gzip.open(fname, mode+'b'))
+        else:
+            return gzip.open(fname, mode+'b')
     else:
         return open(fname, mode)
 
@@ -156,7 +161,7 @@ def process_all(input_fq, all_indexes, unmatched, mismatch, phred):
     help="compress output fastq files with gzip.")
 @click.option("--phred",
     default=33,
-    help="encode of fasta quality string.")
+    help="encode of fastq quality string.")
 def main_(input_fastq, index_file, mismatch, outdir, gzip, phred):
     mis_a, mis_b = mismatch = get_mismatch(mismatch)
     log.info("mismatch threshold:\nindex-a: {}\nindex-b: {}".format(mis_a, mis_b))
@@ -172,7 +177,7 @@ def main_(input_fastq, index_file, mismatch, outdir, gzip, phred):
     for idx in all_idx:
         idx.fopen(path=outdir, suffix=suffix)
         msg = "splited index: {} 's fastq will store to {}".format(
-            str(idx), join(outdir, idx.name) )
+            str(idx), join(outdir, idx.name)+suffix )
         log.info(msg)
     # touch unmatched fq file
     unmatch.fopen(path=outdir, suffix=suffix)
